@@ -90,7 +90,7 @@ const generateIcons = async (version) => {
 
   await Promise.all(promises);
 
-  await fs.writeFile(`${targetDir}/icons.json`, JSON.stringify(icons));
+  await fs.writeFile(`${targetDir}/icons.json`, JSON.stringify(icons, null, 2));
 
   await fs.cp('./assets/cover.png', `${targetDir}/cover.png`);
   await fs.cp('./assets/icon.png', `${targetDir}/icon.png`);
