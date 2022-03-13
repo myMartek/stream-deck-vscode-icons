@@ -1,0 +1,9 @@
+{
+    "Name": "VS Code Icons",
+    "Version": "",
+    "Description": "VS Code Icons",
+    "Author": "Marcel Wlotzka",
+    "URL": "https://github.com/myMartek/stream-deck-vscode-icons",
+    "Icon": "icon.png",
+    "License": "license.txt"
+}
