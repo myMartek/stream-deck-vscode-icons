@@ -8,6 +8,22 @@ import { zip } from 'zip-a-folder';
 
 const targetDir = './output/package/com.visualstudio.code.sdIconPack';
 
+const copyDir = async (src, dest) => {
+  const entries = await fs.readdir(src, { withFileTypes: true });
+  await fs.mkdir(dest, { recursive: true } );
+
+  for(let entry of entries) {
+      const srcPath = path.join(src, entry.name);
+      const destPath = path.join(dest, entry.name);
+
+      if (entry.isDirectory()) {
+          await copyDir(srcPath, destPath);
+      } else {
+          await fs.copyFile(srcPath, destPath);
+      }
+  }
+};
+
 const buildCodiconSVG = async () => {
   // Checkout current vscode-codicons repository
   let gitOtions = {
@@ -67,14 +83,14 @@ const generateIcons = async (version) => {
 
     await converter.from(icon).toPng({
       path: `./output/tmp/${name}.png`,
-      width: 64,
-      height: 64
+      width: 80,
+      height: 80
     });
 
     await sharp({
       create: {
-        width: 128,
-        height: 128,
+        width: 144,
+        height: 144,
         channels: 4,
         background: { r: 255, g: 255, b: 255, alpha: 0 }
       }
@@ -95,6 +111,7 @@ const generateIcons = async (version) => {
   await fs.cp('./assets/cover.png', `${targetDir}/cover.png`);
   await fs.cp('./assets/icon.png', `${targetDir}/icon.png`);
   await fs.cp('./assets/license.txt', `${targetDir}/license.txt`);
+  await copyDir('./assets/previews', `${targetDir}/previews`);
 
   let manifest = JSON.parse(await fs.readFile('./assets/manifest.json'));
 
