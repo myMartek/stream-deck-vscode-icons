@@ -86,11 +86,22 @@ const generateIcons = async (version) => {
     icon = icon.replace('currentColor', 'white');
 
     let html = $('<div />').append(icon);
+
+    let originalSize = parseInt(html.find('svg').attr('width'), 10);
+
+    html.find('svg')
+      .attr('width', '144')
+      .attr('height', '144')
+      .removeAttr('viewBox');
+
     html.find('path').toArray().forEach(el => {
       let jqel = $(el);
       let path = jqel.attr('d');
+      let padding = 32;
       let newPath = new SVGPathCommander(path).transform({
-        scale: 0.75
+        translate: [padding, padding],
+        scale: (144 - (padding * 2)) / originalSize,
+        origin: [0, 0]
       }).toString();
       
       jqel.attr('d', newPath);
