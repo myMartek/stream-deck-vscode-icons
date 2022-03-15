@@ -1,11 +1,14 @@
 import * as fs from 'fs/promises';
-import converter from 'svg-to-img';
-import sharp from 'sharp';
+import { JSDOM } from 'jsdom';
+import SVGPathCommander from 'svg-path-commander';
+import jq from 'jquery';
 import simpleGit, { CleanOptions } from 'simple-git';
 import dirExists from 'directory-exists';
 import path from 'path';
 import { zip } from 'zip-a-folder';
 
+const { window } = new JSDOM();
+const $ = jq(window);
 const targetDir = './output/package/com.visualstudio.code.sdIconPack';
 
 const copyDir = async (src, dest) => {
@@ -61,7 +64,7 @@ const generateIcons = async (version) => {
     icons[id] = {
       name,
       tags: [],
-      path: `${name}.png`
+      path: `${name}.svg`
     };
   });
 
@@ -79,29 +82,34 @@ const generateIcons = async (version) => {
     let name = file.name;
 
     let icon = await fs.readFile(`./vscode-codicons/src/icons/${name}.svg`, 'utf-8');
+    
     icon = icon.replace('currentColor', 'white');
 
-    await converter.from(icon).toPng({
-      path: `./output/tmp/${name}.png`,
-      width: 80,
-      height: 80
-    });
+    let html = $('<div />').append(icon);
 
-    await sharp({
-      create: {
-        width: 144,
-        height: 144,
-        channels: 4,
-        background: { r: 255, g: 255, b: 255, alpha: 0 }
-      }
-    }).composite([
-      {
-        input: `./output/tmp/${name}.png`,
-        top: 32,
-        left: 32,
-      },
-    ]).png()
-      .toFile(`${targetDir}/icons/${name}.png`);
+    let originalSize = parseInt(html.find('svg').attr('width'), 10);
+
+    html.find('svg')
+      .attr('width', '144')
+      .attr('height', '144')
+      .removeAttr('viewBox');
+
+    html.find('path').toArray().forEach(el => {
+      let jqel = $(el);
+      let path = jqel.attr('d');
+      let padding = 32;
+      let newPath = new SVGPathCommander(path).transform({
+        translate: [padding, padding],
+        scale: (144 - (padding * 2)) / originalSize,
+        origin: [0, 0]
+      }).toString();
+      
+      jqel.attr('d', newPath);
+    });
+    
+    icon = html.html();
+
+    fs.writeFile(`${targetDir}/icons/${name}.svg`, icon);
   });
 
   await Promise.all(promises);

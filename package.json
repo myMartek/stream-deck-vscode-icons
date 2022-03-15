@@ -17,9 +17,12 @@
   },
   "dependencies": {
     "directory-exists": "^2.0.1",
+    "jquery": "^3.6.0",
+    "jsdom": "^19.0.0",
     "jszip": "^3.7.1",
     "sharp": "^0.30.2",
     "simple-git": "^3.3.0",
+    "svg-path-commander": "^0.1.25",
     "svg-to-img": "^2.0.9",
     "zip-a-folder": "^1.1.3"
   },
