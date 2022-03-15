@@ -33,15 +33,15 @@ const buildCodiconSVG = async () => {
     baseDir: path.join(process.cwd(), './vscode-codicons'),
   };
 
-  if (await dirExists('./vscode-codicons')) {
+  if (await dirExists(gitOtions.baseDir)) {
     simpleGit(gitOtions)
       .clean(CleanOptions.FORCE)
       .pull();
   } else {
-    simpleGit().clone('https://github.com/microsoft/vscode-codicons.git', gitOtions.baseDir);
+    await simpleGit().clone('https://github.com/microsoft/vscode-codicons.git', gitOtions.baseDir);
   }
 
-  let version = JSON.parse(await fs.readFile('./vscode-codicons/package.json', 'utf-8')).version;
+  let version = JSON.parse(await fs.readFile(path.join(gitOtions.baseDir, 'package.json'), 'utf-8')).version;
 
   console.log(`https://github.com/microsoft/vscode-codicons.git version: ${version}`);
 
