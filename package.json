@@ -1,6 +1,6 @@
 {
   "name": "stream-deck-vscode-icons",
-  "version": "0.0.29",
+  "version": "0.0.31",
   "description": "Visual Studio Code stream deck icons",
   "main": "index.js",
   "type": "module",

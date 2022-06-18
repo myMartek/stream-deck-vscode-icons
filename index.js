@@ -172,6 +172,6 @@ const generateIcons = async (version) => {
   await generateIcons(version);
 
   // create streamDeckIconPack zip file
-  await zip('./output/package', './output/com.visualstudio.code.sdIconPack.streamDeckIconPack');
-  console.log('com.visualstudio.code.sdIconPack.streamDeckIconPack written.');
+  await zip('./output/package', './output/com.visualstudio.code.streamDeckIconPack');
+  console.log('com.visualstudio.code.streamDeckIconPack written.');
 })();
